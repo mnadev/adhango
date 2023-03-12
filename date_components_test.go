@@ -15,7 +15,7 @@ func TestNewDateComponents(t *testing.T) {
 		Day:   23,
 	}
 
-	if want != got {
+	if want != *got {
 		t.Fatalf("wrong date, got = %q, want = %q", got, want)
 	}
 }

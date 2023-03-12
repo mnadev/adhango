@@ -46,7 +46,7 @@ func TestTimeComponentsDateComponentsSuccess(t *testing.T) {
 		t.Fatalf("error with good float64, got err = %v", err)
 	}
 
-	date := DateComponents{
+	date := &DateComponents{
 		Year:  1965,
 		Month: int(time.February),
 		Day:   10,

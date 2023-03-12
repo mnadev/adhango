@@ -32,11 +32,11 @@ func TestRoundToNearestMinute(t *testing.T) {
 }
 
 func TestResolveTime(t *testing.T) {
-	dc := DateComponents{Year: 1990, Month: 2, Day: 2}
+	dc := &DateComponents{Year: 1990, Month: 2, Day: 2}
 
 	got := ResolveTimeByDateComponents(dc)
 
-	want := time.Date(1990, time.February, 2, 0, 0, 0, 0, time.UTC)
+	want := time.Date(1990, time.January, 2, 0, 0, 0, 0, time.UTC)
 
 	if want != got {
 		t.Fatalf("wrong time, got = %+v, want = %+v", got, want)
