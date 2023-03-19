@@ -281,3 +281,18 @@ func DaysSinceSolstice(dayOfYear int, year int, latitude float64) int {
 	}
 	return daysSinceSolistice
 }
+
+func (p *PrayerTimes) SetTimeZone(tzone string) error {
+	loc, err := time.LoadLocation(tzone)
+	if err != nil {
+		return err
+	}
+	p.Fajr = p.Fajr.In(loc)
+	p.Sunrise = p.Sunrise.In(loc)
+	p.Dhuhr = p.Dhuhr.In(loc)
+	p.Asr = p.Asr.In(loc)
+	p.Maghrib = p.Maghrib.In(loc)
+	p.Isha = p.Isha.In(loc)
+
+	return nil
+}
