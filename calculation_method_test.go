@@ -1,148 +1,69 @@
 package adhango
 
 import (
-	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCalculationMethods(t *testing.T) {
 	params := GetMethodParameters(MUSLIM_WORLD_LEAGUE)
-	if math.Abs(params.FajrAngle-18) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.0)
-	}
-	if math.Abs(params.IshaAngle-17) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 17.0)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != MUSLIM_WORLD_LEAGUE {
-		t.Errorf("error; got method = %d, want method %d", params.Method, MUSLIM_WORLD_LEAGUE)
-	}
+	assert.InDelta(t, 18.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 17.0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, MUSLIM_WORLD_LEAGUE, params.Method)
 
 	params = GetMethodParameters(EGYPTIAN)
-	if math.Abs(params.FajrAngle-19.5) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 19.5)
-	}
-	if math.Abs(params.IshaAngle-17.5) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 17.5)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != EGYPTIAN {
-		t.Errorf("error; got method = %d, want method %d", params.Method, EGYPTIAN)
-	}
+	assert.InDelta(t, 19.5, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 17.5, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, EGYPTIAN, params.Method)
 
 	params = GetMethodParameters(KARACHI)
-	if math.Abs(params.FajrAngle-18) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.0)
-	}
-	if math.Abs(params.IshaAngle-18) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 18.0)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != KARACHI {
-		t.Errorf("error; got method = %d, want method %d", params.Method, KARACHI)
-	}
+	assert.InDelta(t, 18.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 18.0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, KARACHI, params.Method)
 
 	params = GetMethodParameters(UMM_AL_QURA)
-	if math.Abs(params.FajrAngle-18.5) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.5)
-	}
-	if math.Abs(params.IshaAngle-0) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 0.0)
-	}
-	if float64(params.IshaInterval) != 90 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 90)
-	}
-	if params.Method != UMM_AL_QURA {
-		t.Errorf("error; got method = %d, want method %d", params.Method, UMM_AL_QURA)
-	}
+	assert.InDelta(t, 18.5, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 90, params.IshaInterval)
+	assert.Equal(t, UMM_AL_QURA, params.Method)
 
 	params = GetMethodParameters(DUBAI)
-	if math.Abs(params.FajrAngle-18.2) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.2)
-	}
-	if math.Abs(params.IshaAngle-18.2) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 18.2)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != DUBAI {
-		t.Errorf("error; got method = %d, want method %d", params.Method, DUBAI)
-	}
+	assert.InDelta(t, 18.2, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 18.2, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, DUBAI, params.Method)
 
 	params = GetMethodParameters(MOON_SIGHTING_COMMITTEE)
-	if math.Abs(params.FajrAngle-18) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.0)
-	}
-	if math.Abs(params.IshaAngle-18) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 18.0)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != MOON_SIGHTING_COMMITTEE {
-		t.Errorf("error; got method = %d, want method %d", params.Method, MOON_SIGHTING_COMMITTEE)
-	}
+	assert.InDelta(t, 18.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 18.0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, MOON_SIGHTING_COMMITTEE, params.Method)
 
 	params = GetMethodParameters(NORTH_AMERICA)
-	if math.Abs(params.FajrAngle-15) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 15.0)
-	}
-	if math.Abs(params.IshaAngle-15) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 15.0)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != NORTH_AMERICA {
-		t.Errorf("error; got method = %d, want method %d", params.Method, NORTH_AMERICA)
-	}
+	assert.InDelta(t, 15.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 15.0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, NORTH_AMERICA, params.Method)
 
 	params = GetMethodParameters(KUWAIT)
-	if math.Abs(params.FajrAngle-18) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.0)
-	}
-	if math.Abs(params.IshaAngle-17.5) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 17.5)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != KUWAIT {
-		t.Errorf("error; got method = %d, want method %d", params.Method, KUWAIT)
-	}
+	assert.InDelta(t, 18.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 17.5, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, KUWAIT, params.Method)
 
 	params = GetMethodParameters(QATAR)
-	if math.Abs(params.FajrAngle-18) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 18.0)
-	}
-	if math.Abs(params.IshaAngle-0) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 0.0)
-	}
-	if float64(params.IshaInterval) != 90 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 90)
-	}
-	if params.Method != QATAR {
-		t.Errorf("error; got method = %d, want method %d", params.Method, QATAR)
-	}
+	assert.InDelta(t, 18.0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 90, params.IshaInterval)
+	assert.Equal(t, QATAR, params.Method)
 
 	params = GetMethodParameters(OTHER)
-	if math.Abs(params.FajrAngle-0) > 0.000001 {
-		t.Errorf("error; got fajr angle = %.2f; want fajr angle = %.2f", params.FajrAngle, 0.0)
-	}
-	if math.Abs(params.IshaAngle-0) > 0.000001 {
-		t.Errorf("error; got isha angle = %.2f; want isha angle = %.2f", params.IshaAngle, 0.0)
-	}
-	if float64(params.IshaInterval) != 0 {
-		t.Errorf("error; got isha interval = %d; want isha interval = %d", params.IshaInterval, 0)
-	}
-	if params.Method != OTHER {
-		t.Errorf("error; got method = %d, want method %d", params.Method, OTHER)
-	}
+	assert.InDelta(t, 0, params.FajrAngle, 0.000001)
+	assert.InDelta(t, 0, params.IshaAngle, 0.000001)
+	assert.Equal(t, 0, params.IshaInterval)
+	assert.Equal(t, OTHER, params.Method)
 }

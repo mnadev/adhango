@@ -3,20 +3,16 @@ package adhango
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsLeapYear(t *testing.T) {
 	got := IsLeapYear(2000)
-
-	if !got {
-		t.Fatalf("error with IsLeapYear, expected true")
-	}
+	assert.True(t, got)
 
 	got = IsLeapYear(2001)
-
-	if got {
-		t.Fatalf("error with IsLeapYear, expected false")
-	}
+	assert.False(t, got)
 }
 
 func TestRoundToNearestMinute(t *testing.T) {
@@ -27,9 +23,9 @@ func TestRoundToNearestMinute(t *testing.T) {
 		want_minutes int
 		want_seconds int
 	}{
-		{59, 31, 11, 2, 0},
+		{2, 29, 11, 2, 0},
 		{2, 31, 11, 3, 0},
-		{59, 31, 10, 59, 0},
+		{59, 31, 12, 0, 0},
 	}
 	for _, tc := range testCases {
 
@@ -37,15 +33,9 @@ func TestRoundToNearestMinute(t *testing.T) {
 
 		got := RoundToNearestMinute(date)
 
-		if tc.want_hours != got.Hour() {
-			t.Fatalf("wrong hours; got = %d, want = %d %d", got.Hour(), tc.want_hours, date.Hour())
-		}
-		if tc.want_minutes != got.Minute() {
-			t.Fatalf("wrong minute; got = %d, want = %d", got.Minute(), tc.want_minutes)
-		}
-		if tc.want_seconds != got.Second() {
-			t.Fatalf("wrong seconds; got = %d, want = %d", got.Second(), tc.want_seconds)
-		}
+		assert.Equal(t, tc.want_hours, got.Hour())
+		assert.Equal(t, tc.want_minutes, got.Minute())
+		assert.Equal(t, tc.want_seconds, got.Second())
 	}
 }
 
@@ -56,7 +46,5 @@ func TestResolveTime(t *testing.T) {
 
 	want := time.Date(1990, time.January, 2, 0, 0, 0, 0, time.UTC)
 
-	if want != got {
-		t.Fatalf("wrong time, got = %+v, want = %+v", got, want)
-	}
+	assert.Equal(t, want, got)
 }

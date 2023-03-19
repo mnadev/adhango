@@ -1,8 +1,9 @@
 package adhango
 
 import (
-	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJulianDay(t *testing.T) {
@@ -28,9 +29,7 @@ func TestJulianDay(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := GetJulianDay(tc.year, tc.month, tc.day, 0)
-		if math.Abs(got-tc.want) > 1e-5 {
-			t.Errorf("error; got = %.2f wanted = %.2f", got, tc.want)
-		}
+		assert.InDelta(t, tc.want, got, 1e-5)
 	}
 }
 
@@ -50,9 +49,7 @@ func TestJulianDayWithHoursAndMinutes(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := GetJulianDay(tc.year, tc.month, tc.day, tc.hours+tc.minutes/60.0)
-		if math.Abs(got-tc.want) > 1e-6 {
-			t.Errorf("error; got = %.2f wanted = %.2f", got, tc.want)
-		}
+		assert.InDelta(t, tc.want, got, 1e-6)
 	}
 }
 
@@ -60,7 +57,5 @@ func TestJulianHours(t *testing.T) {
 	jdWithoutHours := GetJulianDay(2010, 1, 3, 0)
 	jdWithHours := GetJulianDay(2010, 1, 1, 48)
 
-	if math.Abs(jdWithoutHours-jdWithHours) > 1e-7 {
-		t.Errorf("error; without hours = %.2f; with hours = %.2f", jdWithoutHours, jdWithHours)
-	}
+	assert.InDelta(t, jdWithoutHours, jdWithHours, 1e-7)
 }

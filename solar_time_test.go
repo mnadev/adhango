@@ -3,6 +3,8 @@ package adhango
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSolarTime(t *testing.T) {
@@ -26,39 +28,27 @@ func TestSolarTime(t *testing.T) {
 
 	got := timeString(twilightStart)
 	want := "9:38"
-	if got != want {
-		t.Errorf("error; got = %s want = %s", got, want)
-	}
+	assert.Equal(t, want, got)
 
 	got = timeString(sunrise)
 	want = "10:08"
-	if got != want {
-		t.Errorf("error; got = %s want = %s", got, want)
-	}
+	assert.Equal(t, want, got)
 
 	got = timeString(transit)
 	want = "17:20"
-	if got != want {
-		t.Errorf("error; got = %s want = %s", got, want)
-	}
+	assert.Equal(t, want, got)
 
 	got = timeString(sunset)
 	want = "24:32"
-	if got != want {
-		t.Errorf("error; got = %s want = %s", got, want)
-	}
+	assert.Equal(t, want, got)
 
 	got = timeString(twilightEnd)
 	want = "25:02"
-	if got != want {
-		t.Errorf("error; got = %s want = %s", got, want)
-	}
+	assert.Equal(t, want, got)
 
 	got = timeString(invalid)
 	want = ""
-	if got != want {
-		t.Errorf("error; got = %s wanted empty string", got)
-	}
+	assert.Equal(t, want, got)
 }
 
 func TestCalendricalDate(t *testing.T) {
@@ -75,13 +65,9 @@ func TestCalendricalDate(t *testing.T) {
 
 	gotStrDay1 := timeString(day1)
 	wantStrDay1 := "16:15"
-	if gotStrDay1 != wantStrDay1 {
-		t.Errorf("error; got = %s want = %s", gotStrDay1, wantStrDay1)
-	}
+	assert.Equal(t, wantStrDay1, gotStrDay1)
 
 	gotStrDay2 := timeString(day2)
 	wantStrDay2 := "16:14"
-	if gotStrDay2 != wantStrDay2 {
-		t.Errorf("error; got = %s want = %s", gotStrDay2, wantStrDay2)
-	}
+	assert.Equal(t, wantStrDay2, gotStrDay2)
 }

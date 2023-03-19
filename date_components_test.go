@@ -3,6 +3,8 @@ package adhango
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewDateComponents(t *testing.T) {
@@ -15,7 +17,5 @@ func TestNewDateComponents(t *testing.T) {
 		Day:   23,
 	}
 
-	if want != *got {
-		t.Fatalf("wrong date, got = %+v, want = %+v", got, want)
-	}
+	assert.Equal(t, *got, want)
 }

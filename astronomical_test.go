@@ -5,6 +5,8 @@ import (
 	"math"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func timeString(when float64) string {
@@ -20,15 +22,11 @@ func timeString(when float64) string {
 func TestAngleConversion(t *testing.T) {
 	got := Degrees(math.Pi)
 	want := 180.0
-	if math.Abs(got-want) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", got, want)
-	}
+	assert.InDelta(t, want, got, 0.00001)
 
 	got = Degrees(math.Pi / 2)
 	want = 90.0
-	if math.Abs(got-want) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", got, want)
-	}
+	assert.InDelta(t, want, got, 0.00001)
 }
 
 func TestSolarCoordinates(t *testing.T) {
@@ -46,42 +44,17 @@ func TestSolarCoordinates(t *testing.T) {
 	δ := solar.Declination
 	α := UnwindAngle(solar.RightAscension)
 
-	if math.Abs(T-(-0.072183436)) > 0.00000000001 {
-		t.Errorf("error; got = %.2f want = %.2f", T, -0.072183436)
-	}
-
-	if math.Abs(L0-201.80720) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", L0, 201.80720)
-	}
-
-	if math.Abs(ε0-23.44023) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", ε0, 23.44023)
-	}
-
-	if math.Abs(εapp-23.43999) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", εapp, 23.43999)
-	}
-
-	if math.Abs(M-278.99397) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", M, 278.99397)
-	}
-
-	if math.Abs(C-(-1.89732)) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", C, -1.89732)
-	}
+	assert.InDelta(t, -0.072183436, T, 0.00000000001)
+	assert.InDelta(t, 201.80720, L0, 0.00001)
+	assert.InDelta(t, 23.44023, ε0, 0.00001)
+	assert.InDelta(t, 23.43999, εapp, 0.00001)
+	assert.InDelta(t, 278.99397, M, 0.00001)
+	assert.InDelta(t, -1.89732, C, 0.00001)
 
 	// Lower accuracy than desired.
-	if math.Abs(λ-199.90895) > 0.00002 {
-		t.Errorf("error; got = %.2f want = %.2f", λ, 199.90895)
-	}
-
-	if math.Abs(δ-(-7.78507)) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", δ, -7.78507)
-	}
-
-	if math.Abs(α-198.38083) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", α, 198.38083)
-	}
+	assert.InDelta(t, 199.90895, λ, 0.00002)
+	assert.InDelta(t, -7.78507, δ, 0.00001)
+	assert.InDelta(t, 198.38083, α, 0.00001)
 
 	// Values from Astronomical Algorithms, page 88.
 
@@ -99,41 +72,20 @@ func TestSolarCoordinates(t *testing.T) {
 	Δε := NutationInObliquity(L0, Lp, Ω)
 	ε := ε0 + Δε
 
-	if math.Abs(θ0-197.693195) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", θ0, 197.693195)
-	}
-
-	if math.Abs(θapp-197.6922295833) > 0.0001 {
-		t.Errorf("error; got = %.2f want = %.2f", θapp, 197.6922295833)
-	}
+	assert.InDelta(t, 197.693195, θ0, 0.000001)
+	assert.InDelta(t, 197.6922295833, θapp, 0.0001)
 
 	// Values from Astronomical Algorithms, page 148.
-	if math.Abs(Ω-11.2531) > 0.0001 {
-		t.Errorf("error; got = %.2f want = %.2f", Ω, 11.2531)
-	}
-
-	if math.Abs(ΔΨ-(-0.0010522)) > 0.0001 {
-		t.Errorf("error; got = %.2f want = %.2f", ΔΨ, -0.0010522)
-	}
-
-	if math.Abs(Δε-0.0026230556) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", Δε, 0.0026230556)
-	}
-
-	if math.Abs(ε0-23.4409463889) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", ε0, 23.4409463889)
-	}
-
-	if math.Abs(ε-23.4435694444) > 0.00001 {
-		t.Errorf("error; got = %.2f want = %.2f", ε, 23.4435694444)
-	}
+	assert.InDelta(t, 11.2531, Ω, 0.0001)
+	assert.InDelta(t, -0.0010522, ΔΨ, 0.0001)
+	assert.InDelta(t, 0.0026230556, Δε, 0.00001)
+	assert.InDelta(t, 23.4409463889, ε0, 0.000001)
+	assert.InDelta(t, 23.4435694444, ε, 0.00001)
 }
 
 func TestRightAscensionEdgeCase(t *testing.T) {
 	coordinates, err := NewCoordinates(35+47.0/60.0, -78-39.0/60.0)
-	if err != nil {
-		t.Errorf("got error %+v", err)
-	}
+	assert.Nil(t, err)
 
 	var previousTime *SolarTime
 	var currTime *SolarTime
@@ -141,18 +93,11 @@ func TestRightAscensionEdgeCase(t *testing.T) {
 		currTime = NewSolarTime(NewDateComponents(time.Date(2016, 1, 1+i, 0, 0, 0, 0, time.UTC)), coordinates)
 		if i > 0 {
 			// Transit from one day to another should not differ more than one minute.
-			if math.Abs(currTime.Transit-previousTime.Transit) > 1.0/60.0 {
-				t.Errorf("error; got difference = %.2f; wanted difference = %.2f", math.Abs(currTime.Transit-previousTime.Transit), 1.0/60.0)
-			}
+			assert.InDelta(t, previousTime.Transit, currTime.Transit, 1.0/60.0)
 
 			// Sunrise and sunset from one day to another should not differ more than two minutes.
-			if math.Abs(currTime.Sunrise-previousTime.Sunrise) > 2.0/60.0 {
-				t.Errorf("error; got difference = %.2f; wanted difference = %.2f", math.Abs(currTime.Sunrise-previousTime.Sunrise), 2.0/60.0)
-			}
-
-			if math.Abs(currTime.Sunset-previousTime.Sunset) > 2.0/60.0 {
-				t.Errorf("error; got difference = %.2f; wanted difference = %.2f", math.Abs(currTime.Sunset-previousTime.Sunset), 2.0/60.0)
-			}
+			assert.InDelta(t, previousTime.Sunrise, currTime.Sunrise, 2.0/60.0)
+			assert.InDelta(t, previousTime.Sunset, currTime.Sunset, 2.0/60.0)
 		}
 		previousTime = currTime
 	}
@@ -165,77 +110,51 @@ func TestAltitudeOfCelestialBody(t *testing.T) {
 	h := AltitudeOfCelestialBody(φ, δ, H)
 
 	want := 15.1249
-	if math.Abs(h-want) > 0.0001 {
-		t.Fatalf("error with AltitudeOfCelestialBody, got %.4f want %.4f within range of 0.0001", h, want)
-	}
+	assert.InDelta(t, want, h, 0.0001)
 }
 
 func TestTransitAndHourAngle(t *testing.T) {
-	// values from Astronomical Algorithms page 103
+	// Calues from Astronomical Algorithms, page 103.
 	longitude := -71.0833
 	Θ := 177.74208
 	α1 := 40.68021
 	α2 := 41.73129
 	α3 := 42.78204
-	m0 := ApproximateTransit(longitude /* siderealTime */, Θ /* rightAscension */, α2)
+	m0 := ApproximateTransit(longitude, Θ, α2)
 
 	want := 0.81965
-	if math.Abs(m0-want) > 0.00001 {
-		t.Fatalf("error with ApproximateTransit, got %.2f want %.2f within range of 0.00001", m0, want)
-	}
+	assert.InDelta(t, want, m0, 0.00001)
 
-	transit := CorrectedTransit( /* approximateTransit */ m0, longitude /* siderealTime */, Θ /* rightAscension */, α2 /* previousRightAscension */, α1 /* nextRightAscension */, α3) / 24
+	transit := CorrectedTransit(m0, longitude, Θ, α2, α1, α3) / 24
 	want = 0.81980
-	if math.Abs(transit-want) > 0.00001 {
-		t.Fatalf("error with CorrectedTransit, got %.2f want %.2f within range of 0.00001", transit, want)
-	}
+	assert.InDelta(t, want, transit, 0.00001)
 
 	δ1 := 18.04761
 	δ2 := 18.44092
 	δ3 := 18.82742
-	coords, err := NewCoordinates( /* latitude */ 42.3333, longitude)
-	if err != nil {
-		t.Errorf("got error %+v", err)
-	}
-	rise := CorrectedHourAngle( /* approximateTransit */ m0,
-		/* angle */ -0.5667, coords,
-		/* afterTransit */ false /* siderealTime */, Θ,
-		/* rightAscension */ α2 /* previousRightAscension */, α1,
-		/* nextRightAscension */ α3 /* declination */, δ2,
-		/* previousDeclination */ δ1 /* nextDeclination */, δ3) / 24
+	coords, err := NewCoordinates(42.3333, longitude)
+	assert.Nil(t, err)
+
+	rise := CorrectedHourAngle(m0, -0.5667, coords, false, Θ, α2, α1, α3, δ2, δ1, δ3) / 24
 	want = 0.51766
-	if math.Abs(rise-want) > 0.00001 {
-		t.Fatalf("error with CorrectedHourAngle, got %.2f want %.2f within range of 0.00001", rise, want)
-	}
+	assert.InDelta(t, want, rise, 0.00001)
 }
 
 func TestInterpolation(t *testing.T) {
-	// values from Astronomical Algorithms page 25
-	interpolatedValue := Interpolate( /* value */ 0.877366,
-		/* previousValue */ 0.884226 /* nextValue */, 0.870531 /* factor */, 4.35/24)
-	if math.Abs(interpolatedValue-0.876125) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", interpolatedValue, 0.876125)
-	}
+	// Values from Astronomical Algorithms, page 25.
+	interpolatedValue := Interpolate(0.877366, 0.884226, 0.870531, 4.35/24)
+	assert.InDelta(t, 0.876125, interpolatedValue, 0.000001)
 
-	i1 := Interpolate(
-		/* value */ 1 /* previousValue */, -1 /* nextValue */, 3 /* factor */, 0.6)
-	if math.Abs(i1-2.2) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", i1, 2.2)
-	}
+	i1 := Interpolate(1, -1, 3, 0.6)
+	assert.InDelta(t, 2.2, i1, 0.000001)
 }
 
 func TestAngleInterpolation(t *testing.T) {
-	i1 := InterpolateAngles( /* value */ 1 /* previousValue */, -1,
-		/* nextValue */ 3 /* factor */, 0.6)
-	if math.Abs(i1-2.2) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", i1, 2.2)
-	}
+	i1 := InterpolateAngles(1, -1, 3, 0.6)
+	assert.InDelta(t, 2.2, i1, 0.000001)
 
-	i2 := InterpolateAngles( /* value */ 1 /* previousValue */, 359,
-		/* nextValue */ 3 /* factor */, 0.6)
-	if math.Abs(i2-2.2) > 0.000001 {
-		t.Errorf("error; got = %.2f want = %.2f", i2, 2.2)
-	}
+	i2 := InterpolateAngles(1, 359, 3, 0.6)
+	assert.InDelta(t, 2.2, i2, 0.000001)
 }
 
 func TestLeapYear(t *testing.T) {
@@ -259,8 +178,6 @@ func TestLeapYear(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := IsLeapYear(tc.year)
-		if got != tc.want {
-			t.Errorf("error; got = %t want = %t", got, tc.want)
-		}
+		assert.Equal(t, tc.want, got)
 	}
 }

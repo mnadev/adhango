@@ -4,22 +4,18 @@ import (
 	"math"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewTimeComponentsInfiniteNumber(t *testing.T) {
 	_, err := NewTimeComponents(math.Inf(1))
-
-	if err == nil {
-		t.Fatalf("error with inf val, got nil")
-	}
+	assert.Error(t, err)
 }
 
 func TestNewTimeComponentsNan(t *testing.T) {
 	_, err := NewTimeComponents(math.NaN())
-
-	if err == nil {
-		t.Fatalf("error with NaN val, got nil")
-	}
+	assert.Error(t, err)
 }
 
 func TestNewTimeComponentsSuccess(t *testing.T) {
@@ -38,28 +34,17 @@ func TestNewTimeComponentsSuccess(t *testing.T) {
 	for _, tc := range testCases {
 		got, err := NewTimeComponents(tc.value)
 
-		if err != nil {
-			t.Fatalf("got err = %v", err)
-		}
-
-		if tc.want_hours != got.Hours {
-			t.Fatalf("wrong hours; got = %d, want = %d", got.Hours, tc.want_hours)
-		}
-		if tc.want_minutes != got.Minutes {
-			t.Fatalf("wrong minute; got = %d, want = %d", got.Minutes, tc.want_minutes)
-		}
-		if tc.want_seconds != got.Seconds {
-			t.Fatalf("wrong seconds; got = %d, want = %d", got.Seconds, tc.want_seconds)
-		}
+		assert.Nil(t, err)
+		assert.Equal(t, tc.want_hours, got.Hours)
+		assert.Equal(t, tc.want_minutes, got.Minutes)
+		assert.Equal(t, tc.want_seconds, got.Seconds)
 	}
 }
 
 func TestTimeComponentsDateComponentsSuccess(t *testing.T) {
 	tc, err := NewTimeComponents(10.2)
 
-	if err != nil {
-		t.Fatalf("error with good float64, got err = %v", err)
-	}
+	assert.Nil(t, err)
 
 	date := &DateComponents{
 		Year:  1965,
@@ -68,10 +53,6 @@ func TestTimeComponentsDateComponentsSuccess(t *testing.T) {
 	}
 
 	got := tc.DateComponents(date)
-
 	want := time.Date(1965, time.February, 10, 10, 11, 59, 0, time.UTC)
-
-	if want != got {
-		t.Fatalf("wrong time, got = %+v, want = %+v", got, want)
-	}
+	assert.Equal(t, want, got)
 }

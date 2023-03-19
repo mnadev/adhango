@@ -1,8 +1,9 @@
 package adhango
 
 import (
-	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNormalizeWithBound(t *testing.T) {
@@ -26,9 +27,7 @@ func TestNormalizeWithBound(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := NormalizeWithBound(tc.value, tc.max)
-		if math.Abs(got-tc.want) > tc.tolerance {
-			t.Errorf("error; got = %.2f wanted = %.2f", got, tc.want)
-		}
+		assert.InDelta(t, tc.want, got, tc.tolerance)
 	}
 }
 
@@ -45,9 +44,7 @@ func TestUnwindAngle(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := UnwindAngle(tc.value)
-		if math.Abs(got-tc.want) > 1e-5 {
-			t.Errorf("error; got = %.2f wanted = %.2f", got, tc.want)
-		}
+		assert.InDelta(t, tc.want, got, 1e-5)
 	}
 }
 
@@ -70,8 +67,6 @@ func TestClosestAngle(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := ClosestAngle(tc.angle)
-		if math.Abs(got-tc.want) > tc.tolerance {
-			t.Errorf("error; got = %.2f wanted = %.2f", got, tc.want)
-		}
+		assert.InDelta(t, tc.want, got, tc.tolerance)
 	}
 }
