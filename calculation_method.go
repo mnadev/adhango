@@ -45,27 +45,22 @@ func GetMethodParameters(method CalculationMethod) *CalculationParameters {
 	cpb := NewCalculationParametersBuilder().SetMethod(method)
 	switch method {
 	case MUSLIM_WORLD_LEAGUE:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.0).
+		cpb.SetFajrAngle(18.0).
 			SetIshaAngle(17.0).
 			SetMethodAdjustments(PrayerAdjustments{DhuhrAdj: 1})
 	case EGYPTIAN:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(19.5).
+		cpb.SetFajrAngle(19.5).
 			SetIshaAngle(17.5).
 			SetMethodAdjustments(PrayerAdjustments{DhuhrAdj: 1})
 	case KARACHI:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.0).
+		cpb.SetFajrAngle(18.0).
 			SetIshaAngle(18.0).
 			SetMethodAdjustments(PrayerAdjustments{DhuhrAdj: 1})
 	case UMM_AL_QURA:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.5).
+		cpb.SetFajrAngle(18.5).
 			SetIshaInterval(90)
 	case DUBAI:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.2).
+		cpb.SetFajrAngle(18.2).
 			SetIshaAngle(18.2).
 			SetMethodAdjustments(PrayerAdjustments{
 				SunriseAdj: -3,
@@ -74,38 +69,32 @@ func GetMethodParameters(method CalculationMethod) *CalculationParameters {
 				MaghribAdj: 3,
 			})
 	case MOON_SIGHTING_COMMITTEE:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.0).
+		cpb.SetFajrAngle(18.0).
 			SetIshaAngle(18.0).
 			SetMethodAdjustments(PrayerAdjustments{
 				DhuhrAdj:   5,
 				MaghribAdj: 3,
 			})
 	case NORTH_AMERICA:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(15.0).
+		cpb.SetFajrAngle(15.0).
 			SetIshaAngle(15.0).
 			SetMethodAdjustments(PrayerAdjustments{
 				DhuhrAdj: 1,
 			})
 	case KUWAIT:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.0).
+		cpb.SetFajrAngle(18.0).
 			SetIshaAngle(17.5)
 	case QATAR:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(18.0).
+		cpb.SetFajrAngle(18.0).
 			SetIshaInterval(90)
 	case SINGAPORE:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(20.0).
+		cpb.SetFajrAngle(20.0).
 			SetIshaAngle(18.0).
 			SetMethodAdjustments(PrayerAdjustments{
 				DhuhrAdj: 1,
 			})
 	case UOIF:
-		NewCalculationParametersBuilder().
-			SetFajrAngle(12.0).
+		cpb.SetFajrAngle(12.0).
 			SetIshaAngle(12.0)
 	}
 

@@ -34,6 +34,6 @@ func NewTimeComponents(d float64) (*TimeComponents, error) {
 
 // DateComponents takes `d` and `t` and returns a time.Time struct using the values in the two given structs.
 func (t *TimeComponents) DateComponents(d *DateComponents) time.Time {
-	date := time.Date(d.Year, time.Month(d.Month-1), d.Day, 0, t.Minutes, t.Seconds, 0, time.UTC)
+	date := time.Date(d.Year, time.Month(d.Month), d.Day, 0, t.Minutes, t.Seconds, 0, time.UTC)
 	return date.Add(time.Hour * time.Duration(t.Hours))
 }
