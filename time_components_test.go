@@ -23,19 +23,34 @@ func TestNewTimeComponentsNan(t *testing.T) {
 }
 
 func TestNewTimeComponentsSuccess(t *testing.T) {
-	got, err := NewTimeComponents(100000000.321)
-
-	if err != nil {
-		t.Fatalf("error with good float64, got err = %v", err)
+	testCases := []struct {
+		value        float64
+		want_hours   int
+		want_minutes int
+		want_seconds int
+	}{
+		{15.199, 15, 11, 56},
+		{1.0084, 1, 0, 30},
+		{1.0083, 1, 0, 29},
+		{2.1, 2, 6, 0},
+		{3.5, 3, 30, 0},
 	}
+	for _, tc := range testCases {
+		got, err := NewTimeComponents(tc.value)
 
-	want := TimeComponents{
-		Hours:   100000000,
-		Minutes: 19,
-		Seconds: 15,
-	}
-	if want != *got {
-		t.Fatalf("wrong time, got = %+v, want = %+v", got, want)
+		if err != nil {
+			t.Fatalf("got err = %v", err)
+		}
+
+		if tc.want_hours != got.Hours {
+			t.Fatalf("wrong hours; got = %d, want = %d", got.Hours, tc.want_hours)
+		}
+		if tc.want_minutes != got.Minutes {
+			t.Fatalf("wrong minute; got = %d, want = %d", got.Minutes, tc.want_minutes)
+		}
+		if tc.want_seconds != got.Seconds {
+			t.Fatalf("wrong seconds; got = %d, want = %d", got.Seconds, tc.want_seconds)
+		}
 	}
 }
 
