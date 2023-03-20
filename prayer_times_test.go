@@ -1,221 +1,205 @@
 package adhango
 
-// @Test
-// public void testDaysSinceSolstice() {
-//   daysSinceSolsticeTest(11, /* year */ 2016, /* month */ 1, /* day */ 1, /* latitude */ 1);
-//   daysSinceSolsticeTest(10, /* year */ 2015, /* month */ 12, /* day */ 31, /* latitude */ 1);
-//   daysSinceSolsticeTest(10, /* year */ 2016, /* month */ 12, /* day */ 31, /* latitude */ 1);
-//   daysSinceSolsticeTest(0, /* year */ 2016, /* month */ 12, /* day */ 21, /* latitude */ 1);
-//   daysSinceSolsticeTest(1, /* year */ 2016, /* month */ 12, /* day */ 22, /* latitude */ 1);
-//   daysSinceSolsticeTest(71, /* year */ 2016, /* month */ 3, /* day */ 1, /* latitude */ 1);
-//   daysSinceSolsticeTest(70, /* year */ 2015, /* month */ 3, /* day */ 1, /* latitude */ 1);
-//   daysSinceSolsticeTest(365, /* year */ 2016, /* month */ 12, /* day */ 20, /* latitude */ 1);
-//   daysSinceSolsticeTest(364, /* year */ 2015, /* month */ 12, /* day */ 20, /* latitude */ 1);
+import (
+	"testing"
+	"time"
 
-//   daysSinceSolsticeTest(0, /* year */ 2015, /* month */ 6, /* day */ 21, /* latitude */ -1);
-//   daysSinceSolsticeTest(0, /* year */ 2016, /* month */ 6, /* day */ 21, /* latitude */ -1);
-//   daysSinceSolsticeTest(364, /* year */ 2015, /* month */ 6, /* day */ 20, /* latitude */ -1);
-//   daysSinceSolsticeTest(365, /* year */ 2016, /* month */ 6, /* day */ 20, /* latitude */ -1);
-// }
+	"github.com/stretchr/testify/assert"
+)
 
-// private void daysSinceSolsticeTest(int value, int year, int month, int day, double latitude) {
-//   // For Northern Hemisphere start from December 21
-//   // (DYY=0 for December 21, and counting forward, DYY=11 for January 1 and so on).
-//   // For Southern Hemisphere start from June 21
-//   // (DYY=0 for June 21, and counting forward)
-//   Date date = TestUtils.makeDate(year, month, day);
-//   int dayOfYear = TestUtils.getDayOfYear(date);
-//   assertThat(PrayerTimes.daysSinceSolstice(dayOfYear, date.getYear(), latitude)).isEqualTo(value);
-// }
+func addSeconds(t time.Time, offset int) time.Time {
+	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute()+offset, t.Second(), t.Nanosecond(), t.Location())
+}
 
-// @Test
-// public void testPrayerTimes() {
-//   date := NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC));
-//   params := GetParameters(NORTH_AMERICA);
-//   params.madhab = HANAFI;
+func TestPrayerTimes(t *testing.T) {
+	date := NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC))
+	params := GetMethodParameters(NORTH_AMERICA)
+	params.Madhab = HANAFI
 
-//   coordinates := NewCoordinates(35.7750, -78.6336);
-//   prayerTimes := NewPrayerTimes(coordinates, date, params);
+	coords, err := NewCoordinates(35.7750, -78.6336)
+	assert.Nil(t, err)
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-//   SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-//   formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "04:42 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "06:08 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)   // "01:21 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "06:22 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "08:32 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)    // "09:57 PM" NYC time
+}
 
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("04:42 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("06:08 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("01:21 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("06:22 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("08:32 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("09:57 PM");
-// }
+func TestOffsets(t *testing.T) {
+	date := NewDateComponents(time.Date(2015, time.Month(12), 1, 0, 0, 0, 0, time.UTC))
+	coords, err := NewCoordinates(35.7750, -78.6336)
+	assert.Nil(t, err)
 
-// @Test
-// public void testOffsets() {
-//   DateComponents date = new DateComponents(2015, 12, 1);
-//   Coordinates coordinates = new Coordinates(35.7750, -78.6336);
+	params := GetMethodParameters(MUSLIM_WORLD_LEAGUE)
 
-//   SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-//   formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
-//   CalculationParameters parameters = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-//   PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, parameters);
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("05:35 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("07:06 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("12:05 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("02:42 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("05:01 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("06:26 PM");
+	err = prayerTimes.SetTimeZone("America/New_York")
+	assert.Nil(t, err)
 
-//   parameters.adjustments.fajr = 10;
-//   parameters.adjustments.sunrise = 10;
-//   parameters.adjustments.dhuhr = 10;
-//   parameters.adjustments.asr = 10;
-//   parameters.adjustments.maghrib = 10;
-//   parameters.adjustments.isha = 10;
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 35, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)   // "05:35 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 7, 6, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:06 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 5, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:05 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 2, 42, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)    // "02:42 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 1, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:01 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 6, 26, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)   // "06:26 PM" NYC time
 
-//   prayerTimes = new PrayerTimes(coordinates, date, parameters);
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("05:45 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("07:16 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("12:15 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("02:52 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("05:11 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("06:36 PM");
+	params.Adjustments.FajrAdj = 10
+	params.Adjustments.SunriseAdj = 10
+	params.Adjustments.DhuhrAdj = 10
+	params.Adjustments.AsrAdj = 10
+	params.Adjustments.MaghribAdj = 10
+	params.Adjustments.IshaAdj = 10
 
-//   parameters.adjustments = new PrayerAdjustments();
-//   prayerTimes = new PrayerTimes(coordinates, date, parameters);
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("05:35 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("07:06 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("12:05 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("02:42 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("05:01 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("06:26 PM");
-// }
+	prayerTimes, err = NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-// @Test
-// public void testMoonsightingMethod() {
-//   DateComponents date = new DateComponents(2016, 1, 31);
-//   Coordinates coordinates = new Coordinates(35.7750, -78.6336);
-//   PrayerTimes prayerTimes = new PrayerTimes(
-// 	  coordinates, date, CalculationMethod.MOON_SIGHTING_COMMITTEE.getParameters());
+	err = prayerTimes.SetTimeZone("America/New_York")
+	assert.Nil(t, err)
 
-//   SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-//   formatter.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "05:45 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 7, 16, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:16 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 15, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:15 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 2, 52, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "02:52 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 11, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:11 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 6, 36, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)    // "06:36 PM" NYC time
+}
 
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("05:48 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("07:16 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("12:33 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("03:20 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("05:43 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("07:05 PM");
-// }
+func TestMoonsightingMethod(t *testing.T) {
+	date := NewDateComponents(time.Date(2016, time.Month(1), 31, 0, 0, 0, 0, time.UTC))
+	coords, err := NewCoordinates(35.7750, -78.6336)
+	assert.Nil(t, err)
 
-// @Test
-// public void testMoonsightingMethodHighLat() {
-//   // Values from http://www.moonsighting.com/pray.php
-//   DateComponents date = new DateComponents(2016, 1, 1);
-//   CalculationParameters parameters = CalculationMethod.MOON_SIGHTING_COMMITTEE.getParameters();
-//   parameters.madhab = Madhab.HANAFI;
-//   Coordinates coordinates = new Coordinates(59.9094, 10.7349);
+	prayerTimes, err := NewPrayerTimes(coords, date, GetMethodParameters(MOON_SIGHTING_COMMITTEE))
+	assert.Nil(t, err)
 
-//   PrayerTimes prayerTimes = new PrayerTimes(coordinates, date, parameters);
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 5, 48, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "05:48 AM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 7, 16, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:16 AM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 12, 33, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:33 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 3, 20, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "03:20 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 5, 43, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:43 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 7, 5, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)     // "07:05 PM" NYC time
+}
 
-//   SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-//   formatter.setTimeZone(TimeZone.getTimeZone("Europe/Oslo"));
+func TestMoonsightingMethodHighLat(t *testing.T) {
+	// Values from http://www.moonsighting.com/pray.php
+	date := NewDateComponents(time.Date(2016, time.Month(1), 1, 0, 0, 0, 0, time.UTC))
+	params := GetMethodParameters(MOON_SIGHTING_COMMITTEE)
+	params.Madhab = HANAFI
+	coords, err := NewCoordinates(59.9094, 10.7349)
+	assert.Nil(t, err)
 
-//   assertThat(formatter.format(prayerTimes.fajr)).isEqualTo("07:34 AM");
-//   assertThat(formatter.format(prayerTimes.sunrise)).isEqualTo("09:19 AM");
-//   assertThat(formatter.format(prayerTimes.dhuhr)).isEqualTo("12:25 PM");
-//   assertThat(formatter.format(prayerTimes.asr)).isEqualTo("01:36 PM");
-//   assertThat(formatter.format(prayerTimes.maghrib)).isEqualTo("03:25 PM");
-//   assertThat(formatter.format(prayerTimes.isha)).isEqualTo("05:02 PM");
-// }
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-// @Test
-// public void testTimeForPrayer() {
-//   DateComponents components = new DateComponents(2016, 7, 1);
-//   CalculationParameters parameters = CalculationMethod.MUSLIM_WORLD_LEAGUE.getParameters();
-//   parameters.madhab = Madhab.HANAFI;
-//   parameters.highLatitudeRule = HighLatitudeRule.TWILIGHT_ANGLE;
-//   Coordinates coordinates = new Coordinates(59.9094, 10.7349);
+	err = prayerTimes.SetTimeZone("Europe/Oslo")
+	assert.Nil(t, err)
 
-//   PrayerTimes p = new PrayerTimes(coordinates, components, parameters);
-//   assertThat(p.fajr).isEqualTo(p.timeForPrayer(Prayer.FAJR));
-//   assertThat(p.sunrise).isEqualTo(p.timeForPrayer(Prayer.SUNRISE));
-//   assertThat(p.dhuhr).isEqualTo(p.timeForPrayer(Prayer.DHUHR));
-//   assertThat(p.asr).isEqualTo(p.timeForPrayer(Prayer.ASR));
-//   assertThat(p.maghrib).isEqualTo(p.timeForPrayer(Prayer.MAGHRIB));
-//   assertThat(p.isha).isEqualTo(p.timeForPrayer(Prayer.ISHA));
-//   assertThat(p.timeForPrayer(Prayer.NONE)).isNull();
-// }
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 7, 34, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Fajr)    // "07:34 AM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 9, 19, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Sunrise) // "09:19 AM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 12, 25, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Dhuhr)  // "12:25 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 1, 36, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Asr)     // "01:36 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 3, 26, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Maghrib) // "03:25 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 5, 2, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Isha)     // "05:02 PM" Oslo time
+}
 
-// @Test
-// public void testCurrentPrayer() {
-//   DateComponents components = new DateComponents(2015, 9, 1);
-//   CalculationParameters parameters = CalculationMethod.KARACHI.getParameters();
-//   parameters.madhab = Madhab.HANAFI;
-//   parameters.highLatitudeRule = HighLatitudeRule.TWILIGHT_ANGLE;
-//   Coordinates coordinates = new Coordinates(33.720817, 73.090032);
+func TestTimeForPrayer(t *testing.T) {
+	date := NewDateComponents(time.Date(2016, time.Month(7), 1, 0, 0, 0, 0, time.UTC))
+	params := GetMethodParameters(MUSLIM_WORLD_LEAGUE)
+	params.Madhab = HANAFI
+	params.HighLatitudeRule = TWILIGHT_ANGLE
+	coords, err := NewCoordinates(59.9094, 10.7349)
+	assert.Nil(t, err)
 
-//   PrayerTimes p = new PrayerTimes(coordinates, components, parameters);
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.fajr, -1))).isEqualTo(Prayer.NONE);
-//   assertThat(p.currentPrayer(p.fajr)).isEqualTo(Prayer.FAJR);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.fajr, 1))).isEqualTo(Prayer.FAJR);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.sunrise, 1))).isEqualTo(Prayer.SUNRISE);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.dhuhr, 1))).isEqualTo(Prayer.DHUHR);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.asr, 1))).isEqualTo(Prayer.ASR);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.maghrib, 1))).isEqualTo(Prayer.MAGHRIB);
-//   assertThat(p.currentPrayer(TestUtils.addSeconds(p.isha, 1))).isEqualTo(Prayer.ISHA);
-// }
+	assert.Equal(t, prayerTimes.Fajr, prayerTimes.TimeForPrayer(FAJR))
+	assert.Equal(t, prayerTimes.Sunrise, prayerTimes.TimeForPrayer(SUNRISE))
+	assert.Equal(t, prayerTimes.Dhuhr, prayerTimes.TimeForPrayer(DHUHR))
+	assert.Equal(t, prayerTimes.Asr, prayerTimes.TimeForPrayer(ASR))
+	assert.Equal(t, prayerTimes.Maghrib, prayerTimes.TimeForPrayer(MAGHRIB))
+	assert.Equal(t, prayerTimes.Isha, prayerTimes.TimeForPrayer(ISHA))
+	assert.Nil(t, prayerTimes.TimeForPrayer(NO_PRAYER))
+}
 
-// @Test
-// public void testNextPrayer() {
-//   DateComponents components = new DateComponents(2015, 9, 1);
-//   CalculationParameters parameters = CalculationMethod.KARACHI.getParameters();
-//   parameters.madhab = Madhab.HANAFI;
-//   parameters.highLatitudeRule = HighLatitudeRule.TWILIGHT_ANGLE;
-//   Coordinates coordinates = new Coordinates(33.720817, 73.090032);
+func TestCurrentPrayer(t *testing.T) {
+	date := NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
+	params := GetMethodParameters(KARACHI)
+	params.Madhab = HANAFI
+	params.HighLatitudeRule = TWILIGHT_ANGLE
+	coords, err := NewCoordinates(33.720817, 73.090032)
+	assert.Nil(t, err)
 
-//   PrayerTimes p = new PrayerTimes(coordinates, components, parameters);
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.fajr, -1))).isEqualTo(Prayer.FAJR);
-//   assertThat(p.nextPrayer(p.fajr)).isEqualTo(Prayer.SUNRISE);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.fajr, 1))).isEqualTo(Prayer.SUNRISE);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.sunrise, 1))).isEqualTo(Prayer.DHUHR);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.dhuhr, 1))).isEqualTo(Prayer.ASR);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.asr, 1))).isEqualTo(Prayer.MAGHRIB);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.maghrib, 1))).isEqualTo(Prayer.ISHA);
-//   assertThat(p.nextPrayer(TestUtils.addSeconds(p.isha, 1))).isEqualTo(Prayer.NONE);
-// }
+	assert.Equal(t, NO_PRAYER, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Fajr, -1)))
+	assert.Equal(t, FAJR, prayerTimes.CurrentPrayer(prayerTimes.Fajr))
+	assert.Equal(t, FAJR, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Fajr, 1)))
+	assert.Equal(t, SUNRISE, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Sunrise, 1)))
+	assert.Equal(t, DHUHR, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Dhuhr, 1)))
+	assert.Equal(t, ASR, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Asr, 1)))
+	assert.Equal(t, MAGHRIB, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Maghrib, 1)))
+	assert.Equal(t, ISHA, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Isha, 1)))
+}
 
-// @pytest.mark.parametrize(
-//     "year, month, day, latitude, expected",
-//     [
-//         (2016, 1, 1, 1, 11),
-//         (2015, 12, 31, 1, 10),
-//         (2016, 12, 31, 1, 10),
-//         (2016, 12, 21, 1, 0),
-//         (2016, 12, 22, 1, 1),
-//         (2016, 3, 1, 1, 71),
-//         (2015, 3, 1, 1, 70),
-//         (2016, 12, 20, 1, 365),
-//         (2015, 12, 20, 1, 364),
-//         (2015, 6, 21, -1, 0),
-//         (2016, 6, 21, -1, 0),
-//         (2015, 6, 20, -1, 364),
-//         (2016, 6, 20, -1, 365),
-//     ],
-// )
-// def test_days_since_solstice(year, month, day, latitude, expected):
-//     """
-//     For Northern Hemisphere start from December 21
-//     (DYY=0 for December 21, and counting forward, DYY=11 for January 1 and so on).
-//     For Southern Hemisphere start from June 21
-//     (DYY=0 for June 21, and counting forward)
-//     """
+func TestNextPrayer(t *testing.T) {
+	date := NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
+	params := GetMethodParameters(KARACHI)
+	params.Madhab = HANAFI
+	params.HighLatitudeRule = TWILIGHT_ANGLE
+	coords, err := NewCoordinates(33.720817, 73.090032)
+	assert.Nil(t, err)
 
-//     # Arrange
-//     date = datetime(year, month, day)
-//     day_of_year = date.timetuple().tm_yday
+	prayerTimes, err := NewPrayerTimes(coords, date, params)
+	assert.Nil(t, err)
 
-//     # Act, Assert
-//     assert days_since_solstice(day_of_year, date.year, latitude) == expected
+	assert.Equal(t, FAJR, prayerTimes.NextPrayer(addSeconds(prayerTimes.Fajr, -1)))
+	assert.Equal(t, SUNRISE, prayerTimes.NextPrayer(prayerTimes.Fajr))
+	assert.Equal(t, SUNRISE, prayerTimes.NextPrayer(addSeconds(prayerTimes.Fajr, 1)))
+	assert.Equal(t, DHUHR, prayerTimes.NextPrayer(addSeconds(prayerTimes.Sunrise, 1)))
+	assert.Equal(t, ASR, prayerTimes.NextPrayer(addSeconds(prayerTimes.Dhuhr, 1)))
+	assert.Equal(t, MAGHRIB, prayerTimes.NextPrayer(addSeconds(prayerTimes.Asr, 1)))
+	assert.Equal(t, ISHA, prayerTimes.NextPrayer(addSeconds(prayerTimes.Maghrib, 1)))
+	assert.Equal(t, NO_PRAYER, prayerTimes.NextPrayer(addSeconds(prayerTimes.Isha, 1)))
+}
+
+func TestDaysSinceSolstice(t *testing.T) {
+	// For Northern Hemisphere start from December 21
+	// (DYY=0 for December 21, and counting forward, DYY=11 for January 1 and so on).
+	// For Southern Hemisphere start from June 21
+	// (DYY=0 for June 21, and counting forward)
+
+	testCases := []struct {
+		year     int
+		month    int
+		day      int
+		latitude float64
+		expected int
+	}{
+		{2016, 1, 1, 1.0, 11},
+		{2015, 12, 31, 1.0, 10},
+		{2016, 12, 31, 1.0, 10},
+		{2016, 12, 21, 1.0, 0},
+		{2016, 12, 22, 1.0, 1},
+		{2016, 3, 1, 1.0, 71},
+		{2015, 3, 1, 1.0, 70},
+		{2016, 12, 20, 1.0, 365},
+		{2015, 12, 20, 1.0, 364},
+		{2015, 6, 21, -1.0, 0},
+		{2016, 6, 21, -1.0, 0},
+		{2015, 6, 20, -1.0, 364},
+		{2016, 6, 20, -1.0, 365},
+	}
+	for _, tc := range testCases {
+		date := time.Date(tc.year, time.Month(tc.month), tc.day, 0, 0, 0, 0, time.UTC)
+		dss := DaysSinceSolstice(date.YearDay(), tc.year, tc.latitude)
+		assert.Equal(t, tc.expected, dss)
+	}
+}
