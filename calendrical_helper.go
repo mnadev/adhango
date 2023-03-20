@@ -7,12 +7,12 @@ import (
 // GetJulianDay returns the Julian day for a given Gregorian date.
 func GetJulianDay(year int, month int, day int, hours float64) float64 {
 	y := year
-	if month < 2 {
+	if month <= 2 {
 		y = year - 1
 	}
 
 	m := month
-	if month < 2 {
+	if month <= 2 {
 		m = month + 12
 	}
 
