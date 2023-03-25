@@ -10,7 +10,7 @@ Implementations of Adhan in other languages can be found in the parent repo [Adh
 ## Usage
 
 ### Importing
-To use this module, import it by running `go get github.com/mnadev/adhango`.
+To use this module, import it by running `go get github.com/mnadev/adhango`. View it at [pkg.go.dev](https://pkg.go.dev/github.com/mnadev/adhango).
 
 ### Examples
 
@@ -133,5 +133,3 @@ fmt.Printf("Asr: %+v\n", prayerTimes.Asr)         // Asr: 2015-07-12 18:22:00 -0
 fmt.Printf("Maghrib: %+v\n", prayerTimes.Maghrib) // Maghrib: 2015-07-12 20:32:00 -0400 EDT
 fmt.Printf("Isha: %+v\n", prayerTimes.Isha)       // Isha: 2015-07-12 21:57:00 -0400 EDT
 ```
-
-
