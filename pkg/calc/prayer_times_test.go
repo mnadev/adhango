@@ -1,10 +1,13 @@
-package adhango
+package calc
 
 import (
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	data "github.com/mnadev/adhango/pkg/data"
+	util "github.com/mnadev/adhango/pkg/util"
 )
 
 func addSeconds(t time.Time, offset int) time.Time {
@@ -12,11 +15,11 @@ func addSeconds(t time.Time, offset int) time.Time {
 }
 
 func TestPrayerTimes(t *testing.T) {
-	date := NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC))
+	date := data.NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC))
 	params := GetMethodParameters(NORTH_AMERICA)
 	params.Madhab = HANAFI
 
-	coords, err := NewCoordinates(35.7750, -78.6336)
+	coords, err := util.NewCoordinates(35.7750, -78.6336)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
@@ -38,8 +41,8 @@ func TestPrayerTimes(t *testing.T) {
 }
 
 func TestOffsets(t *testing.T) {
-	date := NewDateComponents(time.Date(2015, time.Month(12), 1, 0, 0, 0, 0, time.UTC))
-	coords, err := NewCoordinates(35.7750, -78.6336)
+	date := data.NewDateComponents(time.Date(2015, time.Month(12), 1, 0, 0, 0, 0, time.UTC))
+	coords, err := util.NewCoordinates(35.7750, -78.6336)
 	assert.Nil(t, err)
 
 	params := GetMethodParameters(MUSLIM_WORLD_LEAGUE)
@@ -84,8 +87,8 @@ func TestOffsets(t *testing.T) {
 }
 
 func TestMoonsightingMethod(t *testing.T) {
-	date := NewDateComponents(time.Date(2016, time.Month(1), 31, 0, 0, 0, 0, time.UTC))
-	coords, err := NewCoordinates(35.7750, -78.6336)
+	date := data.NewDateComponents(time.Date(2016, time.Month(1), 31, 0, 0, 0, 0, time.UTC))
+	coords, err := util.NewCoordinates(35.7750, -78.6336)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, GetMethodParameters(MOON_SIGHTING_COMMITTEE))
@@ -108,10 +111,10 @@ func TestMoonsightingMethod(t *testing.T) {
 
 func TestMoonsightingMethodHighLat(t *testing.T) {
 	// Values from http://www.moonsighting.com/pray.php
-	date := NewDateComponents(time.Date(2016, time.Month(1), 1, 0, 0, 0, 0, time.UTC))
+	date := data.NewDateComponents(time.Date(2016, time.Month(1), 1, 0, 0, 0, 0, time.UTC))
 	params := GetMethodParameters(MOON_SIGHTING_COMMITTEE)
 	params.Madhab = HANAFI
-	coords, err := NewCoordinates(59.9094, 10.7349)
+	coords, err := util.NewCoordinates(59.9094, 10.7349)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
@@ -133,11 +136,11 @@ func TestMoonsightingMethodHighLat(t *testing.T) {
 }
 
 func TestTimeForPrayer(t *testing.T) {
-	date := NewDateComponents(time.Date(2016, time.Month(7), 1, 0, 0, 0, 0, time.UTC))
+	date := data.NewDateComponents(time.Date(2016, time.Month(7), 1, 0, 0, 0, 0, time.UTC))
 	params := GetMethodParameters(MUSLIM_WORLD_LEAGUE)
 	params.Madhab = HANAFI
 	params.HighLatitudeRule = TWILIGHT_ANGLE
-	coords, err := NewCoordinates(59.9094, 10.7349)
+	coords, err := util.NewCoordinates(59.9094, 10.7349)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
@@ -153,11 +156,11 @@ func TestTimeForPrayer(t *testing.T) {
 }
 
 func TestCurrentPrayer(t *testing.T) {
-	date := NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
+	date := data.NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
 	params := GetMethodParameters(KARACHI)
 	params.Madhab = HANAFI
 	params.HighLatitudeRule = TWILIGHT_ANGLE
-	coords, err := NewCoordinates(33.720817, 73.090032)
+	coords, err := util.NewCoordinates(33.720817, 73.090032)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
@@ -176,11 +179,11 @@ func TestCurrentPrayer(t *testing.T) {
 }
 
 func TestNextPrayer(t *testing.T) {
-	date := NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
+	date := data.NewDateComponents(time.Date(2015, time.Month(9), 1, 0, 0, 0, 0, time.UTC))
 	params := GetMethodParameters(KARACHI)
 	params.Madhab = HANAFI
 	params.HighLatitudeRule = TWILIGHT_ANGLE
-	coords, err := NewCoordinates(33.720817, 73.090032)
+	coords, err := util.NewCoordinates(33.720817, 73.090032)
 	assert.Nil(t, err)
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)

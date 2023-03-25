@@ -1,7 +1,9 @@
-package adhango
+package util
 
 import (
 	"math"
+
+	data "github.com/mnadev/adhango/pkg/data"
 )
 
 type SolarTime struct {
@@ -16,7 +18,7 @@ type SolarTime struct {
 	ApproximateTransit float64
 }
 
-func NewSolarTime(d *DateComponents, c *Coordinates) *SolarTime {
+func NewSolarTime(d *data.DateComponents, c *Coordinates) *SolarTime {
 	julianDate := GetJulianDay(d.Year, d.Month, d.Day, 0)
 
 	prevSolar := NewSolarCoordinates(julianDate - 1)

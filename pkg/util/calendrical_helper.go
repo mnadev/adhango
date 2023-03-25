@@ -1,4 +1,4 @@
-package adhango
+package util
 
 import (
 	"math"

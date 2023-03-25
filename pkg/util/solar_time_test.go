@@ -1,10 +1,12 @@
-package adhango
+package util
 
 import (
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	data "github.com/mnadev/adhango/pkg/data"
 )
 
 func TestSolarTime(t *testing.T) {
@@ -17,7 +19,7 @@ func TestSolarTime(t *testing.T) {
 	if err != nil {
 		t.Errorf("got error %+v", err)
 	}
-	solar := NewSolarTime(NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC)), coordinates)
+	solar := NewSolarTime(data.NewDateComponents(time.Date(2015, time.Month(7), 12, 0, 0, 0, 0, time.UTC)), coordinates)
 
 	transit := solar.Transit
 	sunrise := solar.Sunrise
@@ -57,8 +59,8 @@ func TestCalendricalDate(t *testing.T) {
 	if err != nil {
 		t.Errorf("got error %+v", err)
 	}
-	day1solar := NewSolarTime(NewDateComponents(time.Date(2015, time.Month(4), 2, 0, 0, 0, 0, time.UTC)), coordinates)
-	day2solar := NewSolarTime(NewDateComponents(time.Date(2015, time.Month(4), 3, 0, 0, 0, 0, time.UTC)), coordinates)
+	day1solar := NewSolarTime(data.NewDateComponents(time.Date(2015, time.Month(4), 2, 0, 0, 0, 0, time.UTC)), coordinates)
+	day2solar := NewSolarTime(data.NewDateComponents(time.Date(2015, time.Month(4), 3, 0, 0, 0, 0, time.UTC)), coordinates)
 
 	day1 := day1solar.Sunrise
 	day2 := day2solar.Sunrise

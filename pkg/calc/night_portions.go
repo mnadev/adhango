@@ -1,4 +1,4 @@
-package adhango
+package calc
 
 type NightPortions struct {
 	Fajr float64

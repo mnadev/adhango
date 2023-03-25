@@ -1,8 +1,11 @@
-package adhango
+package calc
 
 import (
 	"math"
 	"time"
+
+	data "github.com/mnadev/adhango/pkg/data"
+	util "github.com/mnadev/adhango/pkg/util"
 )
 
 type PrayerTimes struct {
@@ -12,40 +15,40 @@ type PrayerTimes struct {
 	Asr               time.Time
 	Maghrib           time.Time
 	Isha              time.Time
-	Coords            *Coordinates
-	DateComponent     *DateComponents
+	Coords            *util.Coordinates
+	DateComponent     *data.DateComponents
 	CalculationParams *CalculationParameters
 }
 
-func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *CalculationParameters) (*PrayerTimes, error) {
-	prayerDate := ResolveTimeByDateComponents(date)
+func NewPrayerTimes(coords *util.Coordinates, date *data.DateComponents, params *CalculationParameters) (*PrayerTimes, error) {
+	prayerDate := data.ResolveTimeByDateComponents(date)
 	dayOfYear := prayerDate.YearDay()
 
 	tomorrowDate := prayerDate.AddDate(0, 0, 1)
-	tomorrow := NewDateComponents(tomorrowDate)
+	tomorrow := data.NewDateComponents(tomorrowDate)
 
-	solarTime := NewSolarTime(date, coords)
+	solarTime := util.NewSolarTime(date, coords)
 
-	timeComponents, err := NewTimeComponents(solarTime.Transit)
+	timeComponents, err := data.NewTimeComponents(solarTime.Transit)
 	if err != nil {
 		return nil, err
 	}
 	transit := timeComponents.DateComponents(date)
 
-	timeComponents, err = NewTimeComponents(solarTime.Sunrise)
+	timeComponents, err = data.NewTimeComponents(solarTime.Sunrise)
 	if err != nil {
 		return nil, err
 	}
 	sunriseComponents := timeComponents.DateComponents(date)
 
-	timeComponents, err = NewTimeComponents(solarTime.Sunset)
+	timeComponents, err = data.NewTimeComponents(solarTime.Sunset)
 	if err != nil {
 		return nil, err
 	}
 	sunsetComponents := timeComponents.DateComponents(date)
 
-	tomorrowSolarTime := NewSolarTime(tomorrow, coords)
-	tomorrowSunriseComponents, err := NewTimeComponents(tomorrowSolarTime.Sunrise)
+	tomorrowSolarTime := util.NewSolarTime(tomorrow, coords)
+	tomorrowSunriseComponents, err := data.NewTimeComponents(tomorrowSolarTime.Sunrise)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +57,7 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	tempSunrise := sunriseComponents
 	tempMaghrib := sunsetComponents
 
-	timeComponents, err = NewTimeComponents(solarTime.Afternoon(MadhabToShadowLengthMap[params.Madhab]))
+	timeComponents, err = data.NewTimeComponents(solarTime.Afternoon(MadhabToShadowLengthMap[params.Madhab]))
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +67,7 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	night := tomorrowSunrise.Sub(sunsetComponents) * 1000
 
 	tempFajr := time.Time{}
-	timeComponents, err = NewTimeComponents(solarTime.HourAngle(-1*params.FajrAngle, false))
+	timeComponents, err = data.NewTimeComponents(solarTime.HourAngle(-1*params.FajrAngle, false))
 	if err == nil {
 		tempFajr = timeComponents.DateComponents(date)
 	}
@@ -96,7 +99,7 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	if params.IshaInterval > 0 {
 		tempIsha = tempMaghrib.Add(time.Second * time.Duration(params.IshaInterval*60))
 	} else {
-		timeComponents, err = NewTimeComponents(solarTime.HourAngle(-1*params.IshaAngle, true))
+		timeComponents, err = data.NewTimeComponents(solarTime.HourAngle(-1*params.IshaAngle, true))
 		if err == nil {
 			tempIsha = timeComponents.DateComponents(date)
 		}
@@ -121,12 +124,12 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	}
 
 	// Assign final times to public struct members with all offsets
-	fajr := RoundToNearestMinute(tempFajr.Add(time.Minute * time.Duration(params.Adjustments.FajrAdj+params.MethodAdjustments.FajrAdj)))
-	sunrise := RoundToNearestMinute(tempSunrise.Add(time.Minute * time.Duration(params.Adjustments.SunriseAdj+params.MethodAdjustments.SunriseAdj)))
-	dhuhr := RoundToNearestMinute(tempDhuhr.Add(time.Minute * time.Duration(params.Adjustments.DhuhrAdj+params.MethodAdjustments.DhuhrAdj)))
-	asr := RoundToNearestMinute(tempAsr.Add(time.Minute * time.Duration(params.Adjustments.AsrAdj+params.MethodAdjustments.AsrAdj)))
-	maghrib := RoundToNearestMinute(tempMaghrib.Add(time.Minute * time.Duration(params.Adjustments.MaghribAdj+params.MethodAdjustments.MaghribAdj)))
-	isha := RoundToNearestMinute(tempIsha.Add(time.Minute * time.Duration(params.Adjustments.IshaAdj+params.MethodAdjustments.IshaAdj)))
+	fajr := data.RoundToNearestMinute(tempFajr.Add(time.Minute * time.Duration(params.Adjustments.FajrAdj+params.MethodAdjustments.FajrAdj)))
+	sunrise := data.RoundToNearestMinute(tempSunrise.Add(time.Minute * time.Duration(params.Adjustments.SunriseAdj+params.MethodAdjustments.SunriseAdj)))
+	dhuhr := data.RoundToNearestMinute(tempDhuhr.Add(time.Minute * time.Duration(params.Adjustments.DhuhrAdj+params.MethodAdjustments.DhuhrAdj)))
+	asr := data.RoundToNearestMinute(tempAsr.Add(time.Minute * time.Duration(params.Adjustments.AsrAdj+params.MethodAdjustments.AsrAdj)))
+	maghrib := data.RoundToNearestMinute(tempMaghrib.Add(time.Minute * time.Duration(params.Adjustments.MaghribAdj+params.MethodAdjustments.MaghribAdj)))
+	isha := data.RoundToNearestMinute(tempIsha.Add(time.Minute * time.Duration(params.Adjustments.IshaAdj+params.MethodAdjustments.IshaAdj)))
 
 	return &PrayerTimes{
 		Fajr:              fajr,
@@ -259,7 +262,7 @@ func SeasonAdjustedEveningTwilight(latitude float64, day int, year int, sunset t
 func DaysSinceSolstice(dayOfYear int, year int, latitude float64) int {
 	daysSinceSolistice := 0
 	northernOffset := 10
-	isLeapYear := IsLeapYear(year)
+	isLeapYear := data.IsLeapYear(year)
 	southernOffset := 172
 	daysInYear := 365
 	if isLeapYear {

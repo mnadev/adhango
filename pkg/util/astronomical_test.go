@@ -1,4 +1,4 @@
-package adhango
+package util
 
 import (
 	"fmt"
@@ -6,11 +6,12 @@ import (
 	"testing"
 	"time"
 
+	data "github.com/mnadev/adhango/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
 
 func timeString(when float64) string {
-	components, err := NewTimeComponents(when)
+	components, err := data.NewTimeComponents(when)
 	if err != nil {
 		return ""
 	}
@@ -90,7 +91,7 @@ func TestRightAscensionEdgeCase(t *testing.T) {
 	var previousTime *SolarTime
 	var currTime *SolarTime
 	for i := 0; i < 365; i++ {
-		currTime = NewSolarTime(NewDateComponents(time.Date(2016, 1, 1+i, 0, 0, 0, 0, time.UTC)), coordinates)
+		currTime = NewSolarTime(data.NewDateComponents(time.Date(2016, 1, 1+i, 0, 0, 0, 0, time.UTC)), coordinates)
 		if i > 0 {
 			// Transit from one day to another should not differ more than one minute.
 			assert.InDelta(t, previousTime.Transit, currTime.Transit, 1.0/60.0)
@@ -177,7 +178,7 @@ func TestLeapYear(t *testing.T) {
 		{2600, false},
 	}
 	for _, tc := range testCases {
-		got := IsLeapYear(tc.year)
+		got := data.IsLeapYear(tc.year)
 		assert.Equal(t, tc.want, got)
 	}
 }

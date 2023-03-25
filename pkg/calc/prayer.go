@@ -1,4 +1,4 @@
-package adhango
+package calc
 
 type Prayer int64
 
