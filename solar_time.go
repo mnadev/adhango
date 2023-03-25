@@ -1,6 +1,8 @@
 package adhango
 
-import "math"
+import (
+	"math"
+)
 
 type SolarTime struct {
 	Transit float64
