@@ -1,4 +1,4 @@
-module github.com/mnadev/adhan-go
+module github.com/mnadev/adhango
 
 go 1.19
 
