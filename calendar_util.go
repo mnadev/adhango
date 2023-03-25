@@ -24,5 +24,5 @@ func ResolveTimeByDateComponents(c *DateComponents) time.Time {
 
 // ResolveTime creates a time.Time struct given `year`, `month` and `day`.
 func ResolveTime(year int, month int, day int) time.Time {
-	return time.Date(year, time.Month(month-1), day, 0, 0, 0, 0, time.UTC)
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
 }

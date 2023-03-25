@@ -44,7 +44,7 @@ func TestResolveTime(t *testing.T) {
 
 	got := ResolveTimeByDateComponents(dc)
 
-	want := time.Date(1990, time.January, 2, 0, 0, 0, 0, time.UTC)
+	want := time.Date(1990, time.February, 2, 0, 0, 0, 0, time.UTC)
 
 	assert.Equal(t, want, got)
 }
