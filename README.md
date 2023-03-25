@@ -46,6 +46,7 @@ The recommended way to initialize a `CalculationParameters` object is by using t
 
 ```go
 params := calc.GetMethodParameters(calc.NORTH_AMERICA)
+params.Madhab = calc.HANAFI
 ```
 
 Alternatively, if you want you could use the `CalculationParametersBuilder` to build a `CalculationParameters` object.
