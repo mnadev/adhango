@@ -61,7 +61,7 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	tempAsr := timeComponents.DateComponents(date)
 
 	tomorrowSunrise := tomorrowSunriseComponents.DateComponents(tomorrow)
-	night := tomorrowSunrise.Sub(sunsetComponents)
+	night := tomorrowSunrise.Sub(sunsetComponents) * 1000
 
 	tempFajr := time.Time{}
 	timeComponents, err = NewTimeComponents(solarTime.HourAngle(-1*params.FajrAngle, false))
@@ -70,7 +70,7 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	}
 
 	if params.Method == MOON_SIGHTING_COMMITTEE && coords.Latitude >= 55 {
-		tempFajr = sunriseComponents.Add(time.Second * time.Duration(-1*(int)(night/7000)))
+		tempFajr = sunriseComponents.Add(time.Second * time.Duration(-1*(int)(night.Seconds()/7000)))
 	}
 
 	nightPortions, err := params.NightPortions()
@@ -92,18 +92,17 @@ func NewPrayerTimes(coords *Coordinates, date *DateComponents, params *Calculati
 	}
 
 	// Isha calculation with check against safe value
-	var tempIsha time.Time
+	tempIsha := time.Time{}
 	if params.IshaInterval > 0 {
 		tempIsha = tempMaghrib.Add(time.Second * time.Duration(params.IshaInterval*60))
 	} else {
-		tempIsha := time.Time{}
 		timeComponents, err = NewTimeComponents(solarTime.HourAngle(-1*params.IshaAngle, true))
 		if err == nil {
 			tempIsha = timeComponents.DateComponents(date)
 		}
 
 		if params.Method == MOON_SIGHTING_COMMITTEE && coords.Latitude >= 55 {
-			nightFraction := int64(night / 7000)
+			nightFraction := int64(night.Seconds() / 7000)
 			tempIsha = sunsetComponents.Add(time.Second * time.Duration(nightFraction))
 		}
 

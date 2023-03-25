@@ -8,7 +8,7 @@ import (
 )
 
 func addSeconds(t time.Time, offset int) time.Time {
-	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute()+offset, t.Second(), t.Nanosecond(), t.Location())
+	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second()+offset, t.Nanosecond(), t.Location())
 }
 
 func TestPrayerTimes(t *testing.T) {
@@ -18,15 +18,23 @@ func TestPrayerTimes(t *testing.T) {
 
 	coords, err := NewCoordinates(35.7750, -78.6336)
 	assert.Nil(t, err)
+
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
 	assert.Nil(t, err)
 
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "04:42 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "06:08 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)   // "01:21 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "06:22 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "08:32 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(7), 12, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)    // "09:57 PM" NYC time
+	err = prayerTimes.SetTimeZone("America/New_York")
+	assert.Nil(t, err)
+
+	loc, err := time.LoadLocation("America/New_York")
+	assert.Nil(t, err)
+
+	// Using UTC times in the date constructor, but I convert to EST for assertion.
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 8, 42, 0, 0, time.UTC).In(loc), prayerTimes.Fajr)     // "04:42 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 10, 8, 0, 0, time.UTC).In(loc), prayerTimes.Sunrise)  // "06:08 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 17, 21, 0, 0, time.UTC).In(loc), prayerTimes.Dhuhr)   // "01:21 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 22, 22, 0, 0, time.UTC).In(loc), prayerTimes.Asr)     // "06:22 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 24, 32, 0, 0, time.UTC).In(loc), prayerTimes.Maghrib) // "08:32 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(7), 12, 25, 57, 0, 0, time.UTC).In(loc), prayerTimes.Isha)    // "09:57 PM" NYC time
 }
 
 func TestOffsets(t *testing.T) {
@@ -42,12 +50,16 @@ func TestOffsets(t *testing.T) {
 	err = prayerTimes.SetTimeZone("America/New_York")
 	assert.Nil(t, err)
 
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 35, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)   // "05:35 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 7, 6, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:06 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 5, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:05 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 2, 42, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)    // "02:42 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 1, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:01 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 6, 26, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)   // "06:26 PM" NYC time
+	loc, err := time.LoadLocation("America/New_York")
+	assert.Nil(t, err)
+
+	// Using UTC times in the date constructor, but I convert to EST for assertion.
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 10, 35, 0, 0, time.UTC).In(loc), prayerTimes.Fajr)   // "05:35 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 6, 0, 0, time.UTC).In(loc), prayerTimes.Sunrise) // "07:06 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 17, 5, 0, 0, time.UTC).In(loc), prayerTimes.Dhuhr)   // "12:05 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 19, 42, 0, 0, time.UTC).In(loc), prayerTimes.Asr)    // "02:42 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 22, 1, 0, 0, time.UTC).In(loc), prayerTimes.Maghrib) // "05:01 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 23, 26, 0, 0, time.UTC).In(loc), prayerTimes.Isha)   // "06:26 PM" NYC time
 
 	params.Adjustments.FajrAdj = 10
 	params.Adjustments.SunriseAdj = 10
@@ -62,12 +74,13 @@ func TestOffsets(t *testing.T) {
 	err = prayerTimes.SetTimeZone("America/New_York")
 	assert.Nil(t, err)
 
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 45, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "05:45 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 7, 16, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:16 AM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 15, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:15 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 2, 52, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "02:52 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 5, 11, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:11 PM" NYC time
-	assert.Equal(t, time.Date(2015, time.Month(12), 1, 6, 36, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)    // "06:36 PM" NYC time
+	// Using UTC times in the date constructor, but I convert to EST for assertion.
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 10, 45, 0, 0, time.UTC).In(loc), prayerTimes.Fajr)    // "05:45 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 12, 16, 0, 0, time.UTC).In(loc), prayerTimes.Sunrise) // "07:16 AM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 17, 15, 0, 0, time.UTC).In(loc), prayerTimes.Dhuhr)   // "12:15 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 19, 52, 0, 0, time.UTC).In(loc), prayerTimes.Asr)     // "02:52 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 22, 11, 0, 0, time.UTC).In(loc), prayerTimes.Maghrib) // "05:11 PM" NYC time
+	assert.Equal(t, time.Date(2015, time.Month(12), 1, 23, 36, 0, 0, time.UTC).In(loc), prayerTimes.Isha)    // "06:36 PM" NYC time
 }
 
 func TestMoonsightingMethod(t *testing.T) {
@@ -78,12 +91,19 @@ func TestMoonsightingMethod(t *testing.T) {
 	prayerTimes, err := NewPrayerTimes(coords, date, GetMethodParameters(MOON_SIGHTING_COMMITTEE))
 	assert.Nil(t, err)
 
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 5, 48, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Fajr)    // "05:48 AM" NYC time
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 7, 16, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Sunrise) // "07:16 AM" NYC time
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 12, 33, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Dhuhr)  // "12:33 PM" NYC time
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 3, 20, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Asr)     // "03:20 PM" NYC time
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 5, 43, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Maghrib) // "05:43 PM" NYC time
-	assert.Equal(t, time.Date(2016, time.Month(1), 31, 7, 5, 0, 0, time.FixedZone("America/New_York", 0)), prayerTimes.Isha)     // "07:05 PM" NYC time
+	err = prayerTimes.SetTimeZone("America/New_York")
+	assert.Nil(t, err)
+
+	loc, err := time.LoadLocation("America/New_York")
+	assert.Nil(t, err)
+
+	// Using UTC times in the date constructor, but I convert to EST for assertion.
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 10, 48, 0, 0, time.UTC).In(loc), prayerTimes.Fajr)    // "05:48 AM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 12, 16, 0, 0, time.UTC).In(loc), prayerTimes.Sunrise) // "07:16 AM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 17, 33, 0, 0, time.UTC).In(loc), prayerTimes.Dhuhr)   // "12:33 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 20, 20, 0, 0, time.UTC).In(loc), prayerTimes.Asr)     // "03:20 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 22, 43, 0, 0, time.UTC).In(loc), prayerTimes.Maghrib) // "05:43 PM" NYC time
+	assert.Equal(t, time.Date(2016, time.Month(1), 31, 24, 5, 0, 0, time.UTC).In(loc), prayerTimes.Isha)     // "07:05 PM" NYC time
 }
 
 func TestMoonsightingMethodHighLat(t *testing.T) {
@@ -100,12 +120,16 @@ func TestMoonsightingMethodHighLat(t *testing.T) {
 	err = prayerTimes.SetTimeZone("Europe/Oslo")
 	assert.Nil(t, err)
 
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 7, 34, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Fajr)    // "07:34 AM" Oslo time
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 9, 19, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Sunrise) // "09:19 AM" Oslo time
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 12, 25, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Dhuhr)  // "12:25 PM" Oslo time
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 1, 36, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Asr)     // "01:36 PM" Oslo time
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 3, 26, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Maghrib) // "03:25 PM" Oslo time
-	assert.Equal(t, time.Date(2016, time.Month(1), 1, 5, 2, 0, 0, time.FixedZone("Europe/Oslo", 0)), prayerTimes.Isha)     // "05:02 PM" Oslo time
+	loc, err := time.LoadLocation("Europe/Oslo")
+	assert.Nil(t, err)
+
+	// Using UTC times in the date constructor, but I convert to EST for assertion.
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 6, 34, 0, 0, time.UTC).In(loc), prayerTimes.Fajr)     // "07:34 AM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 8, 19, 0, 0, time.UTC).In(loc), prayerTimes.Sunrise)  // "09:19 AM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 11, 25, 0, 0, time.UTC).In(loc), prayerTimes.Dhuhr)   // "12:25 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 12, 36, 0, 0, time.UTC).In(loc), prayerTimes.Asr)     // "01:36 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 14, 25, 0, 0, time.UTC).In(loc), prayerTimes.Maghrib) // "03:25 PM" Oslo time
+	assert.Equal(t, time.Date(2016, time.Month(1), 1, 16, 2, 0, 0, time.UTC).In(loc), prayerTimes.Isha)     // "05:02 PM" Oslo time
 }
 
 func TestTimeForPrayer(t *testing.T) {
@@ -125,7 +149,7 @@ func TestTimeForPrayer(t *testing.T) {
 	assert.Equal(t, prayerTimes.Asr, prayerTimes.TimeForPrayer(ASR))
 	assert.Equal(t, prayerTimes.Maghrib, prayerTimes.TimeForPrayer(MAGHRIB))
 	assert.Equal(t, prayerTimes.Isha, prayerTimes.TimeForPrayer(ISHA))
-	assert.Nil(t, prayerTimes.TimeForPrayer(NO_PRAYER))
+	assert.Equal(t, time.Time{}, prayerTimes.TimeForPrayer(NO_PRAYER))
 }
 
 func TestCurrentPrayer(t *testing.T) {
@@ -138,6 +162,8 @@ func TestCurrentPrayer(t *testing.T) {
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
 	assert.Nil(t, err)
+
+	prayerTimes.SetTimeZone("Asia/Karachi")
 
 	assert.Equal(t, NO_PRAYER, prayerTimes.CurrentPrayer(addSeconds(prayerTimes.Fajr, -1)))
 	assert.Equal(t, FAJR, prayerTimes.CurrentPrayer(prayerTimes.Fajr))
@@ -159,6 +185,8 @@ func TestNextPrayer(t *testing.T) {
 
 	prayerTimes, err := NewPrayerTimes(coords, date, params)
 	assert.Nil(t, err)
+
+	prayerTimes.SetTimeZone("Asia/Karachi")
 
 	assert.Equal(t, FAJR, prayerTimes.NextPrayer(addSeconds(prayerTimes.Fajr, -1)))
 	assert.Equal(t, SUNRISE, prayerTimes.NextPrayer(prayerTimes.Fajr))
